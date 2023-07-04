@@ -2,22 +2,18 @@
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
-#define WIFI_SSID       "KPU ATAS"
-#define WIFI_PASSWORD   "87654321"
+#define WIFI_SSID       "nama_wifi_anda"
+#define WIFI_PASSWORD   "password_wifi_anda"
 #define MQTT_SERVER     "io.adafruit.com"
 #define MQTT_PORT       1883
-#define MQTT_USERNAME   "alifilham1"
-#define MQTT_KEY        "aio_oxKf27cIkY8zOe6xUIgVirYqzAkp"
-#define MQTT_TOPIC_AMP  "alifilham1/feeds/ampere"
-#define MQTT_TOPIC_VOLT "alifilham1/feeds/tegangan"
-#define MQTT_TOPIC_RPM  "alifilham1/feeds/rpm"
+#define MQTT_USERNAME   "username_anda"
+#define MQTT_KEY        "kunci_anda"
+#define MQTT_TOPIC      "feeds"
 
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, MQTT_SERVER, MQTT_PORT, MQTT_USERNAME, MQTT_KEY);
 
-Adafruit_MQTT_Publish feed_amp = Adafruit_MQTT_Publish(&mqtt, MQTT_TOPIC_AMP);
-Adafruit_MQTT_Publish feed_volt = Adafruit_MQTT_Publish(&mqtt, MQTT_TOPIC_VOLT);
-Adafruit_MQTT_Publish feed_rpm = Adafruit_MQTT_Publish(&mqtt, MQTT_TOPIC_RPM);
+Adafruit_MQTT_Publish feed = Adafruit_MQTT_Publish(&mqtt, MQTT_TOPIC);
 
 void setup() {
   Serial.begin(115200);
@@ -38,36 +34,18 @@ void setup() {
 }
 
 void loop() {
-  // Generate random data for ampere, voltage, and RPM
-  float ampere = random(0, 101);
-  float tegangan = random(0, 101);
-  float rpm = random(0, 101);
+  // Generate random data (0-100)
+  float data = random(0, 101);
 
   // Convert data to string
-  String ampereString = String(ampere);
-  String teganganString = String(tegangan);
-  String rpmString = String(rpm);
+  String dataString = String(data);
 
   // Publish data to Adafruit IO
-  if (feed_amp.publish(ampereString.c_str())) {
-    Serial.print("Data sent to Adafruit IO (Ampere): ");
-    Serial.println(ampereString);
+  if (feed.publish(dataString.c_str())) {
+    Serial.print("Data sent to Adafruit IO: ");
+    Serial.println(dataString);
   } else {
-    Serial.println("Failed to send data to Adafruit IO (Ampere)");
-  }
-
-  if (feed_volt.publish(teganganString.c_str())) {
-    Serial.print("Data sent to Adafruit IO (Tegangan): ");
-    Serial.println(teganganString);
-  } else {
-    Serial.println("Failed to send data to Adafruit IO (Tegangan)");
-  }
-
-  if (feed_rpm.publish(rpmString.c_str())) {
-    Serial.print("Data sent to Adafruit IO (RPM): ");
-    Serial.println(rpmString);
-  } else {
-    Serial.println("Failed to send data to Adafruit IO (RPM)");
+    Serial.println("Failed to send data to Adafruit IO");
   }
 
   delay(5000);  // Delay 5 seconds between each data send
